@@ -1,13 +1,13 @@
 import Button from "../Button/Button";
 
-const Header = ({ title, toggleHandler, showAdd }) => {
+const Header = ({ title, toggleHandler, showAddTask }) => {
   return (
     <header className="header">
       <h1>{title}</h1>
       <Button
-        color={showAdd ? "red" : "green"}
+        color={showAddTask ? "red" : "green"}
         clickButton={toggleHandler}
-        text={showAdd ? "Close" : "Add"}
+        text={showAddTask ? "Close" : "Add"}
       />
     </header>
   );

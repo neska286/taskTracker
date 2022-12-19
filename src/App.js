@@ -1,11 +1,22 @@
-import  { useState } from "react"
+import  { useState} from "react"
 import AddTask from "./Components/AddTask/AddTask";
+import Filter from "./Components/Filter";
 import Header from "./Components/Header/Header";
 import Tasks from "./Components/Tasks/Tasks";
 
+
 function App() {
-  const [showAddTask,setShowAddTask]= useState(false);
-  const[tasks,setTasks]= useState([
+// const inputEle = useRef()
+const initialState = {
+  text:'',
+  day:'',
+  // reminder: false
+}
+  const[showAddTask,SetShowAddTask] = useState(false)
+  const[filter,setFilter] = useState("")
+  const [inputs,setInputs]= useState(initialState)
+  const [reminder,setReminder]= useState(false)
+  const[state,setState]= useState([
     {
       id: 1,
       text: "Doctors Appointment",
@@ -27,40 +38,71 @@ function App() {
   }
   ])
 
-const addTask = (task)=>{
-  console.log(task);
+
+const handleDelete=(id)=>{
+  console.log('id',id)
+  setState((prevState)=>{
+    
+return prevState.filter((task)=> task.id !== id)
+  })
+}
+const handleToggle=(id)=>{
+  setState((prevState)=>{
+    return prevState.map((task)=>{
+      return (
+        task.id === id ? {...task, reminder : ! task.reminder}: task   
+      )
+
+    })
+  })
+  
+}
+const toggleHandler = ()=>{
+  SetShowAddTask(!showAddTask)
+}
+// const inputChange = ()=>{
+//   console.log(inputEle.current.value)
+// }
+// const handleFocus =()=>{
+//   inputEle.current.focus()
+// }
+const filterName = (text)=>{
+  setFilter(text)
+}
+const textHandler =()=>{
+  if(filter.length !== 0){
+    return state.filter((el)=> el.text.includes(filter))
+  }
+  return state
+}
+
+const handleSubmit =(e)=>{
+  e.preventDefault()
+  console.log('inputs',inputs,reminder)
   const id= Math.floor(Math.random()* 1000) + 1
-  const newTask = {id,...task}
-  setTasks([...tasks, newTask])
-}
-const deleteTask = (id)=>{
-  // console.log('delete',id);
-  setTasks(tasks.filter((task)=>{
-    return(
-      task.id !==id
-    )
-  }))
-}
+  console.log('id',id)
+  // const newTask = {id,inputs}
+  // setState((prevState)=> setState([...prevState,...inputs]))
+  const tempState = {id,...inputs,reminder };
+  setState([...state,tempState]);
 
-const toggleReminder = (id)=>{
-  console.log(id);
-  setTasks(tasks.map((task)=>{
-    return (
-      task.id === id ? {...task, reminder : ! task.reminder} : task
-    )
-  }))
-
+  
 }
-const toggleAddbutton= ()=>{
-  setShowAddTask(!showAddTask)
-}
-
   return (
     <div className="container">
-    <Header toggleHandler={toggleAddbutton} showAdd={showAddTask}/>
-   {showAddTask && <AddTask onAdd={addTask}/>}
-    { tasks.length ? (<Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder}/>) : ('No Tasks To Show')}
-    
+    <Header showAddTask={showAddTask} toggleHandler={toggleHandler}/>
+   {showAddTask && <AddTask 
+   setInputs={setInputs} 
+   handleSubmit={handleSubmit}
+   setReminder={setReminder}
+   reminder={reminder}/>}
+   {/* <input
+   type="text"
+   placeholder="test for use ref"
+   onChange={inputChange}/>
+   <button onClick={handleFocus}> focus me</button> */}
+   <Filter filteration={filterName}/>
+   {state.length ? ( <Tasks state={textHandler()} handleDelete={handleDelete} handleToggle={handleToggle}/>):('No Tasks To Show')}
     </div>
   );
 }

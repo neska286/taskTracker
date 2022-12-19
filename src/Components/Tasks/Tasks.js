@@ -3,17 +3,16 @@ import Task from "../Task/Task"
 
 
 
-const Tasks = ({tasks,onDelete,onToggle}) => {
+const Tasks = ({state,handleDelete,handleToggle}) => {
   
   return (
     <>
-        {tasks.map((task)=>{
-            return (
-               <Task key={task.id} task={task} deleteHandler={onDelete} toggleHandler={onToggle}/>
-            )
-
-        })}
-      
+    {state.map((task)=>{
+      return (
+       <Task task={task} key={task.id} handleDelete={()=>handleDelete(task.id)} handleToggle={handleToggle}/>
+      )
+    })}
+    
     </>
   )
 }
